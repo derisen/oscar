@@ -5,9 +5,16 @@
  */
 package ca.nines.wilde.cmd;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -20,7 +27,6 @@ import org.atteo.classindex.IndexSubclasses;
 /**
  *
  * @author michael
- *
  */
 @IndexSubclasses
 abstract public class Command {
@@ -42,6 +48,16 @@ abstract public class Command {
             }
         }
         return commandList;
+    }
+
+    public List<Path> findFiles(String root) throws IOException {
+        return findFiles(Paths.get(root));
+    }
+
+    public List<Path> findFiles(Path root) throws IOException {
+        Stream<Path> filePathStream = Files.find(root, 4, (path, attr) -> String.valueOf(path).endsWith(".xml"));
+        ArrayList<Path> pathList = filePathStream.collect(Collectors.toCollection(ArrayList::new));
+        return pathList;
     }
 
     public Options getOptions() {
