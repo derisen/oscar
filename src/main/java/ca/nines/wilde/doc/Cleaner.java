@@ -32,7 +32,8 @@ public class Cleaner {
         "dc.source.institution",
         "dc.source.facsimile",
         "dc.publisher.edition",
-        "dc.source.url",})));
+        "dc.source.url",
+    })));
 
     public List<String> clean(WildeDoc doc) throws XPathExpressionException {
         List<String> removed = new ArrayList<>();

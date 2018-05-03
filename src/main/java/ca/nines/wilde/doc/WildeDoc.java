@@ -57,6 +57,17 @@ public class WildeDoc {
         document.getElementsByTagName("head").item(0).appendChild(link);
     }
 
+    // <a class="similarity levenshtein" data-document="r_666" data-paragraph="d1e67" data-similarity="0.9443609022556391" data-type="levenshtein"/>
+    public void addParagraphSimilarity(Node paragraph, WildeDoc otherDoc, Node otherParagraph, double similarity, String measure) throws XPathExpressionException {
+        Element a = document.createElement("a");
+        a.setAttribute("class", "similarity " + measure);
+        a.setAttribute("data-document", otherDoc.getDocId());
+        a.setAttribute("data-paragraph", ((Element)otherParagraph).getAttribute("id"));
+        a.setAttribute("data-similarity", Double.toString(similarity));
+        a.setAttribute("data-type", measure);
+        paragraph.appendChild(a);
+    }
+
     public void setDocumentIndexed() {
         Element meta = document.createElement("meta");
         meta.setAttribute("name", "index.document");
@@ -66,6 +77,21 @@ public class WildeDoc {
 
     public boolean isDocumentIndexed() throws XPathExpressionException {
         String indexed = (String)this.xpath.evaluate("//meta[@name='index.document']/@content", document.getDocumentElement(), XPathConstants.STRING);
+        if(indexed != null && indexed.equals("yes")) {
+            return true;
+        }
+        return false;
+    }
+
+    public void setParagraphsIndexed() {
+        Element meta = document.createElement("meta");
+        meta.setAttribute("name", "index.paragraph");
+        meta.setAttribute("content", "yes");
+        document.getElementsByTagName("head").item(0).appendChild(meta);
+    }
+
+    public boolean areParagraphsIndexed() throws XPathExpressionException {
+        String indexed = (String)this.xpath.evaluate("//meta[@name='index.paragraph']/@content", document.getDocumentElement(), XPathConstants.STRING);
         if(indexed != null && indexed.equals("yes")) {
             return true;
         }
@@ -153,6 +179,5 @@ public class WildeDoc {
         }
         return node.getTextContent();
     }
-
 
 }

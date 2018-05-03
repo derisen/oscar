@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ca.nines.wilde.cmd;
 
+import static ca.nines.wilde.cmd.DocCompare.LEVEN_THRESHOLD;
 import ca.nines.wilde.doc.DocReader;
 import ca.nines.wilde.doc.DocWriter;
 import ca.nines.wilde.doc.WildeDoc;
@@ -18,13 +14,16 @@ import javax.xml.xpath.XPathExpressionException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.text.similarity.CosineDistance;
 import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
  *
- * @author michael
+ * @author mjoyce
  */
-public class DocCompare extends Command {
+public class ParagraphCompare extends Command {
+
+    public static final int MIN_LENGTH = 25;
 
     public static final double LEVEN_THRESHOLD = 0.6;
 
@@ -32,7 +31,7 @@ public class DocCompare extends Command {
 
     @Override
     public String getDescription() {
-        return "Run the document-level comparison.";
+        return "Compare all paragraphs.";
     }
 
     @Override
@@ -42,42 +41,54 @@ public class DocCompare extends Command {
             System.err.println(getUsage());
             return;
         }
-        List<WildeDoc> corpus = getCorpus(args);
 
-        long comparisons = (corpus.size() * (corpus.size()-1) ) / 2;
+        List<WildeDoc> corpus = getCorpus(args);
+        long comparisons = (corpus.size() * (corpus.size() - 1)) / 2;
         System.out.println("Expect " + comparisons + " total comparisons.");
         long n = 0;
         DocWriter writer = new DocWriter();
 
         for (int i = 0; i < corpus.size(); i++) {
             WildeDoc documentI = corpus.get(i);
-            String textI = normalize(documentI.getOriginalText());
-            String langI = documentI.getMetadata("dc.language");
+            String lang = documentI.getMetadata("dc.language");
+            NodeList parasI = documentI.getParagraphs();
             for (int j = 0; j < i; j++) {
                 n++;
                 WildeDoc documentJ = corpus.get(j);
-                if (!documentJ.getMetadata("dc.language").equals(langI)) {
-                    continue;
+                if (documentJ.getMetadata("dc.language").equals(lang)) {
+                    NodeList parasJ = documentJ.getParagraphs();
+                    for (int a = 0; a < parasI.getLength(); a++) {
+                        String texta = normalize(parasI.item(a).getTextContent());
+                        if (texta.length() < MIN_LENGTH) {
+                            continue;
+                        }
+                        for (int b = 0; b < parasJ.getLength(); b++) {
+                            String textb = normalize(parasJ.item(b).getTextContent());
+                            if (textb.length() < MIN_LENGTH) {
+                                continue;
+                            }
+
+                            double dc = cosine(texta, textb);
+                            double dl = levenshtein(texta, textb);
+                            if (dl > LEVEN_THRESHOLD) {
+                                documentI.addParagraphSimilarity(parasI.item(a), documentJ, parasJ.item(b), dl, "levenshtein");
+                                documentJ.addParagraphSimilarity(parasJ.item(b), documentI, parasI.item(a), dl, "levenshtein");
+                            }
+                            if (dc > COSINE_THRESHOLD) {
+                                documentI.addParagraphSimilarity(parasI.item(a), documentJ, parasJ.item(b), dc, "cosine");
+                                documentJ.addParagraphSimilarity(parasJ.item(b), documentI, parasI.item(a), dc, "cosine");
+                            }
+                        }
+                    }
                 }
-                String textJ = normalize(documentJ.getOriginalText());
-                double dc = cosine(textI, textJ);
-                double dl = levenshtein(textI, textJ);
-                if(n % 25 == 0) {
+                if (n % 25 == 0) {
                     System.out.print('.');
                 }
-                if(n % (25 * 70) == 0) {
+                if (n % (25 * 70) == 0) {
                     System.out.println(" " + n);
                 }
-                if(dl > LEVEN_THRESHOLD) {
-                    documentI.addDocSimilarity(documentJ, dl, "levenshtein");
-                    documentJ.addDocSimilarity(documentI, dl, "levenshtein");
-                }
-                if(dc > COSINE_THRESHOLD) {
-                    documentI.addDocSimilarity(documentJ, dc, "cosine");
-                    documentJ.addDocSimilarity(documentI, dc, "cosine");
-                }
             }
-            documentI.setDocumentIndexed();
+            documentI.setParagraphsIndexed();
             writer.write(documentI.getPath(), documentI);
         }
 
@@ -85,12 +96,12 @@ public class DocCompare extends Command {
 
     @Override
     public String getCommandName() {
-        return "dc";
+        return "pc";
     }
 
     @Override
     public String getUsage() {
-        return "jar -jar wilde.jar dc <path>...";
+        return "java -jar pc <path>...";
     }
 
     protected double levenshtein(String a, String b) {
@@ -116,9 +127,8 @@ public class DocCompare extends Command {
 
     protected String normalize(String text) {
         return Normalizer
-                .normalize(text, Normalizer.Form.NFD)
+                .normalize(text.replaceAll("[\\p{Punct}]", " "), Normalizer.Form.NFD)
                 .toLowerCase()
-                .replaceAll("[\\p{Punct}]", " ")
                 .replaceAll("\\s+", " ")
                 .replaceAll("[^a-z0-9 -]", "")
                 .trim();
@@ -130,7 +140,7 @@ public class DocCompare extends Command {
         for (String arg : args) {
             for (Path p : this.findFiles(arg)) {
                 WildeDoc doc = reader.read(p);
-                if( ! doc.isDocumentIndexed()) {
+                if (!doc.areParagraphsIndexed()) {
                     corpus.add(doc);
                 }
             }
