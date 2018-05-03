@@ -6,6 +6,7 @@
 package ca.nines.wilde.cmd;
 
 import ca.nines.wilde.doc.DocReader;
+import ca.nines.wilde.doc.DocWriter;
 import ca.nines.wilde.doc.WildeDoc;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -26,7 +27,7 @@ public class DocCompare extends Command {
 
     public static final double LEVEN_THRESHOLD = 0.6;
 
-    public static final double COSINE_THRESHOLD = 0.85;
+    public static final double COSINE_THRESHOLD = 0.9;
 
     @Override
     public String getDescription() {
@@ -43,7 +44,9 @@ public class DocCompare extends Command {
         List<WildeDoc> corpus = getCorpus(args);
 
         long comparisons = (corpus.size() * (corpus.size()-1)) / 2;
+        System.out.println("Expect " + comparisons + " total comparisons.");
         long n = 0;
+        DocWriter writer = new DocWriter();
 
         for (int i = 0; i < corpus.size(); i++) {
             WildeDoc documentI = corpus.get(i);
@@ -58,21 +61,25 @@ public class DocCompare extends Command {
                 double dc = cosine(textI, textJ);
                 double dl = levenshtein(textI, textJ);
                 n++;
-//                if(n % 25 == 0) {
-//                    System.out.print('.');
-//                }
-//                if(n % (25 * 70) == 0) {
-//                    System.out.println(" " + n);
-//                }
-                if(dl == 0) {
-                    continue;
+                if(n % 25 == 0) {
+                    System.out.print('.');
                 }
-                System.out.print(documentI.getDocId() + "\t" + documentJ.getDocId());
-                System.out.print("\t" + dl + "\t" + dc);
-                System.out.println("\t" + n + " of " + comparisons);
-
+                if(n % (25 * 70) == 0) {
+                    System.out.println(" " + n);
+                }
+                if(dl > LEVEN_THRESHOLD) {
+                    documentI.addDocSimilarity(documentJ, dl, "levenshtein");
+                    documentJ.addDocSimilarity(documentI, dl, "levenshtein");
+                }
+                if(dc > COSINE_THRESHOLD) {
+                    documentI.addDocSimilarity(documentJ, dc, "cosine");
+                    documentJ.addDocSimilarity(documentI, dc, "cosine");
+                }
             }
+            documentI.setDocumentIndexed();
+            writer.write(documentI.getPath(), documentI);
         }
+
     }
 
     @Override

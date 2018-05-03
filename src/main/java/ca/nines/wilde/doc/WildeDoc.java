@@ -48,6 +48,30 @@ public class WildeDoc {
         return id;
     }
 
+    public void addDocSimilarity(WildeDoc other, double similarity, String measure) throws XPathExpressionException {
+        Element link = document.createElement("link");
+        link.setAttribute("class", measure);
+        link.setAttribute("data-similarity", Double.toString(similarity));
+        link.setAttribute("href", other.getDocId());
+        link.setAttribute("rel", "similarity");
+        document.getElementsByTagName("head").item(0).appendChild(link);
+    }
+
+    public void setDocumentIndexed() {
+        Element meta = document.createElement("meta");
+        meta.setAttribute("name", "index.document");
+        meta.setAttribute("content", "yes");
+        document.getElementsByTagName("head").item(0).appendChild(meta);
+    }
+
+    public boolean isDocumentIndexed() throws XPathExpressionException {
+        String indexed = (String)this.xpath.evaluate("//meta[@name='index.document']/@content", document.getDocumentElement(), XPathConstants.STRING);
+        if(indexed != null && indexed.equals("yes")) {
+            return true;
+        }
+        return false;
+    }
+
     public NodeList getParagraphs() throws XPathExpressionException {
         NodeList paragraphs = (NodeList)this.xpath.evaluate("//p", document.getDocumentElement(), XPathConstants.NODESET);
         return paragraphs;

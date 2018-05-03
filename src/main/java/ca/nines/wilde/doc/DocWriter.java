@@ -8,6 +8,7 @@ package ca.nines.wilde.doc;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Path;
 import javax.xml.transform.OutputKeys;
@@ -18,6 +19,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.NullOutputStream;
 import org.w3c.dom.Document;
 import org.w3c.tidy.Tidy;
 
@@ -50,6 +52,7 @@ public class DocWriter {
         tidy.setXmlOut(true);
         tidy.setSmartIndent(true);
         tidy.setTidyMark(false);
+        tidy.setErrout(new PrintWriter(new NullOutputStream()));
         tidy.setWraplen(Integer.MAX_VALUE);
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(data.getBytes("UTF-8"));
