@@ -28,7 +28,6 @@ public class DocReader {
 
     public WildeDoc read(Path path) throws SAXException, IOException {
         Document doc = db.parse(path.toFile());
-        // return doc;
         WildeDoc wilde = new WildeDoc(path, doc);
         return wilde;
     }

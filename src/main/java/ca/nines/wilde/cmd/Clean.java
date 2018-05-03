@@ -10,7 +10,6 @@ import ca.nines.wilde.doc.DocReader;
 import ca.nines.wilde.doc.DocWriter;
 import ca.nines.wilde.doc.WildeDoc;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
 
@@ -35,8 +34,10 @@ public class Clean extends Command {
         DocReader reader = new DocReader();
         DocWriter writer = new DocWriter();
         Cleaner cleaner = new Cleaner();
+        int i = 1;
         for (String arg : args) {
             for (Path input : this.findFiles(arg)) {
+                String id = input.getParent().toString().replaceAll("[^A-Z]", "").toLowerCase();
                 WildeDoc doc = reader.read(input);
                 List<String> removed = cleaner.clean(doc);
                 if(removed.size() > 0) {
@@ -45,7 +46,9 @@ public class Clean extends Command {
                         System.out.println("  removed: " + s);
                     }
                 }
+                cleaner.addIdentifiers(doc, id, i);
                 writer.write(input, doc);
+                i++;
             }
         }
     }

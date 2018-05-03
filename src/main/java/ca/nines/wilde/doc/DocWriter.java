@@ -44,19 +44,20 @@ public class DocWriter {
         transformer.transform(source, result);
         String data = writer.toString();
 
-        Tidy tidy = new Tidy();
-        tidy.setInputEncoding("UTF-8");
-        tidy.setOutputEncoding("UTF-8");
-        tidy.setXmlOut(true);
-        tidy.setSmartIndent(true);
-        tidy.setTidyMark(false);
-        tidy.setWraplen(Integer.MAX_VALUE);
+//        Tidy tidy = new Tidy();
+//        tidy.setInputEncoding("UTF-8");
+//        tidy.setOutputEncoding("UTF-8");
+//        tidy.setXmlOut(true);
+//        tidy.setSmartIndent(true);
+//        tidy.setTidyMark(false);
+//        tidy.setWraplen(Integer.MAX_VALUE);
+//
+//        ByteArrayInputStream inputStream = new ByteArrayInputStream(data.getBytes("UTF-8"));
+//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//        tidy.parseDOM(inputStream, outputStream);
+//        data = outputStream.toString("UTF-8");
 
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(data.getBytes("UTF-8"));
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        tidy.parseDOM(inputStream, outputStream);
-
-        FileUtils.writeStringToFile(path.toFile(), outputStream.toString("UTF-8"), "UTF-8", false);
+        FileUtils.writeStringToFile(path.toFile(), data, "UTF-8", false);
     }
 
 }
