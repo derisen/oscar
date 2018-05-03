@@ -1,6 +1,5 @@
 package ca.nines.wilde.cmd;
 
-import static ca.nines.wilde.cmd.DocCompare.LEVEN_THRESHOLD;
 import ca.nines.wilde.doc.DocReader;
 import ca.nines.wilde.doc.DocWriter;
 import ca.nines.wilde.doc.WildeDoc;
@@ -14,6 +13,7 @@ import javax.xml.xpath.XPathExpressionException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.text.similarity.CosineDistance;
 import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -58,12 +58,20 @@ public class ParagraphCompare extends Command {
                 if (documentJ.getMetadata("dc.language").equals(lang)) {
                     NodeList parasJ = documentJ.getParagraphs();
                     for (int a = 0; a < parasI.getLength(); a++) {
-                        String texta = normalize(parasI.item(a).getTextContent());
+                        Element parI = (Element)parasI.item(a);
+                        if(parI.hasAttribute("class") && parI.getAttribute("class").contains("heading")) {
+                            continue;
+                        }
+                        String texta = normalize(parI.getTextContent());
                         if (texta.length() < MIN_LENGTH) {
                             continue;
                         }
                         for (int b = 0; b < parasJ.getLength(); b++) {
-                            String textb = normalize(parasJ.item(b).getTextContent());
+                            Element parJ = (Element)parasJ.item(b);
+                            if(parJ.hasAttribute("class") && parJ.getAttribute("class").contains("heading")) {
+                                continue;
+                            }
+                            String textb = normalize(parJ.getTextContent());
                             if (textb.length() < MIN_LENGTH) {
                                 continue;
                             }
@@ -71,12 +79,12 @@ public class ParagraphCompare extends Command {
                             double dc = cosine(texta, textb);
                             double dl = levenshtein(texta, textb);
                             if (dl > LEVEN_THRESHOLD) {
-                                documentI.addParagraphSimilarity(parasI.item(a), documentJ, parasJ.item(b), dl, "levenshtein");
-                                documentJ.addParagraphSimilarity(parasJ.item(b), documentI, parasI.item(a), dl, "levenshtein");
+                                documentI.addParagraphSimilarity(parI, documentJ, parJ, dl, "levenshtein");
+                                documentJ.addParagraphSimilarity(parJ, documentI, parI, dl, "levenshtein");
                             }
                             if (dc > COSINE_THRESHOLD) {
-                                documentI.addParagraphSimilarity(parasI.item(a), documentJ, parasJ.item(b), dc, "cosine");
-                                documentJ.addParagraphSimilarity(parasJ.item(b), documentI, parasI.item(a), dc, "cosine");
+                                documentI.addParagraphSimilarity(parI, documentJ, parJ, dc, "cosine");
+                                documentJ.addParagraphSimilarity(parJ, documentI, parI, dc, "cosine");
                             }
                         }
                     }
