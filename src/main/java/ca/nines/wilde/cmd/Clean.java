@@ -6,10 +6,8 @@
 package ca.nines.wilde.cmd;
 
 import ca.nines.wilde.doc.Cleaner;
-import ca.nines.wilde.doc.DocReader;
 import ca.nines.wilde.doc.DocWriter;
 import ca.nines.wilde.doc.WildeDoc;
-import java.nio.file.Path;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
 
@@ -27,29 +25,27 @@ public class Clean extends Command {
     @Override
     public void execute(CommandLine cmd) throws Exception {
         String[] args = this.getArgList(cmd);
-        if(args.length == 0) {
+        if (args.length == 0) {
             System.err.println(getUsage());
             return;
         }
-        DocReader reader = new DocReader();
         DocWriter writer = new DocWriter();
         Cleaner cleaner = new Cleaner();
+        List<WildeDoc> corpus = getCorpus(args);
         int i = 1;
-        for (String arg : args) {
-            for (Path input : this.findFiles(arg)) {
-                String id = input.getParent().toString().replaceAll("[^A-Z]", "").toLowerCase();
-                WildeDoc doc = reader.read(input);
-                List<String> removed = cleaner.clean(doc);
-                if(removed.size() > 0) {
-                    System.out.println(input);
-                    for(String s : removed) {
-                        System.out.println("  removed: " + s);
-                    }
+        for (WildeDoc doc : corpus) {
+            String id = doc.getPath().getParent().toString().replaceAll("[^A-Z]", "").toLowerCase();
+            List<String> removed = cleaner.clean(doc);
+            if (removed.size() > 0) {
+                System.out.println(doc.getPath());
+                for (String s : removed) {
+                    System.out.println("  removed: " + s);
                 }
-                cleaner.addIdentifiers(doc, id, i);
-                writer.write(input, doc);
-                i++;
             }
+            cleaner.addIdentifiers(doc, id, i);
+            doc.setMetadata("wr.path", doc.getPath().toString());
+            writer.write(doc.getPath(), doc);
+            i++;
         }
     }
 

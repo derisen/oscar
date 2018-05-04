@@ -5,10 +5,8 @@
  */
 package ca.nines.wilde.cmd;
 
-import ca.nines.wilde.doc.DocReader;
 import ca.nines.wilde.doc.Validator;
 import ca.nines.wilde.doc.WildeDoc;
-import java.nio.file.Path;
 import org.apache.commons.cli.CommandLine;
 
 /**
@@ -25,19 +23,15 @@ public class Validate extends Command {
     @Override
     public void execute(CommandLine cmd) throws Exception {
         String[] args = this.getArgList(cmd);
-        if(args.length == 0) {
+        if (args.length == 0) {
             System.err.println(getUsage());
             return;
         }
-        DocReader reader = new DocReader();
         Validator validator = new Validator();
-        for (String arg : args) {
-            for (Path p : this.findFiles(arg)) {
-                WildeDoc doc = reader.read(p);
-                for(String s : validator.validate(doc)) {
-                    System.out.println(p);
-                    System.out.println("  ERROR: " + s);
-                }
+        for (WildeDoc doc : getCorpus(args)) {
+            for (String s : validator.validate(doc)) {
+                System.out.println(doc.getPath());
+                System.out.println("  ERROR: " + s);
             }
         }
     }

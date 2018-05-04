@@ -5,14 +5,9 @@
  */
 package ca.nines.wilde.cmd;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import ca.nines.wilde.doc.DocWriter;
+import ca.nines.wilde.doc.Validator;
+import ca.nines.wilde.doc.WildeDoc;
 import org.apache.commons.cli.CommandLine;
 
 /**
@@ -29,15 +24,16 @@ public class WordCount extends Command {
     @Override
     public void execute(CommandLine cmd) throws Exception {
         String[] args = this.getArgList(cmd);
-        if(args.length == 0) {
+        if (args.length == 0) {
             System.err.println(getUsage());
             return;
         }
-        for (String arg : args) {
-            System.out.println(arg);
-            for (Path p : this.findFiles(arg)) {
-                System.out.println("  " + p);
-            }
+        DocWriter writer = new DocWriter();
+        for (WildeDoc doc : getCorpus(args)) {
+            String text = doc.getOriginalText();
+            int count = text.trim().split("\\s+").length;
+            doc.addMetadata("wr.wordcount", Integer.toString(count));
+            writer.write(doc.getPath(), doc);
         }
     }
 

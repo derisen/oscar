@@ -5,6 +5,9 @@
  */
 package ca.nines.wilde.cmd;
 
+import ca.nines.wilde.Util.Callback;
+import ca.nines.wilde.doc.DocReader;
+import ca.nines.wilde.doc.WildeDoc;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,6 +18,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -23,6 +28,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.atteo.classindex.ClassIndex;
 import org.atteo.classindex.IndexSubclasses;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -30,6 +36,7 @@ import org.atteo.classindex.IndexSubclasses;
  */
 @IndexSubclasses
 abstract public class Command {
+
     private static final Map<String, Command> commandList = new TreeMap<>();
 
     abstract public String getDescription();
@@ -41,8 +48,8 @@ abstract public class Command {
     abstract public String getUsage();
 
     public static Map<String, Command> getCommandList() throws InstantiationException, IllegalAccessException {
-        if(commandList.isEmpty()) {
-            for(Class<?> cls : ClassIndex.getSubclasses(Command.class)) {
+        if (commandList.isEmpty()) {
+            for (Class<?> cls : ClassIndex.getSubclasses(Command.class)) {
                 Command cmd = (Command) cls.newInstance();
                 commandList.put(cmd.getCommandName(), cmd);
             }
@@ -58,6 +65,29 @@ abstract public class Command {
         Stream<Path> filePathStream = Files.find(root, 4, (path, attr) -> String.valueOf(path).endsWith(".xml"));
         ArrayList<Path> pathList = filePathStream.collect(Collectors.toCollection(ArrayList::new));
         return pathList;
+    }
+
+    protected List<WildeDoc> getCorpus(String[] args) throws ParserConfigurationException, IOException, IOException, SAXException, XPathExpressionException {
+        return getCorpus(args, new Callback() {
+            @Override
+            public boolean include(WildeDoc doc) {
+                return true;
+            }
+        });
+    }
+
+    protected List<WildeDoc> getCorpus(String[] args, Callback filter) throws ParserConfigurationException, IOException, IOException, SAXException, XPathExpressionException {
+        List<WildeDoc> corpus = new ArrayList<>(1000);
+        DocReader reader = new DocReader();
+        for (String arg : args) {
+            for (Path p : this.findFiles(arg)) {
+                WildeDoc doc = reader.read(p);
+                if(filter.include(doc)) {
+                    corpus.add(doc);
+                }
+            }
+        }
+        return corpus;
     }
 
     public Options getOptions() {

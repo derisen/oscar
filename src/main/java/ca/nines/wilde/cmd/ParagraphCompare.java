@@ -1,21 +1,18 @@
 package ca.nines.wilde.cmd;
 
-import ca.nines.wilde.doc.DocReader;
+import ca.nines.wilde.Util.Callback;
+import static ca.nines.wilde.Util.Text.cosine;
+import static ca.nines.wilde.Util.Text.levenshtein;
+import static ca.nines.wilde.Util.Text.normalize;
 import ca.nines.wilde.doc.DocWriter;
 import ca.nines.wilde.doc.WildeDoc;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.text.Normalizer;
-import java.util.ArrayList;
 import java.util.List;
-import javax.xml.parsers.ParserConfigurationException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.xpath.XPathExpressionException;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.text.similarity.CosineDistance;
-import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -42,7 +39,13 @@ public class ParagraphCompare extends Command {
             return;
         }
 
-        List<WildeDoc> corpus = getCorpus(args);
+        List<WildeDoc> corpus = getCorpus(args, new Callback() {
+            @Override
+            public boolean include(WildeDoc doc) throws XPathExpressionException {
+                return !doc.areParagraphsIndexed();
+            }
+        });
+        
         long comparisons = (corpus.size() * (corpus.size() - 1)) / 2;
         System.out.println("Expect " + comparisons + " total comparisons.");
         long n = 0;
@@ -58,8 +61,8 @@ public class ParagraphCompare extends Command {
                 if (documentJ.getMetadata("dc.language").equals(lang)) {
                     NodeList parasJ = documentJ.getParagraphs();
                     for (int a = 0; a < parasI.getLength(); a++) {
-                        Element parI = (Element)parasI.item(a);
-                        if(parI.hasAttribute("class") && parI.getAttribute("class").contains("heading")) {
+                        Element parI = (Element) parasI.item(a);
+                        if (parI.hasAttribute("class") && parI.getAttribute("class").contains("heading")) {
                             continue;
                         }
                         String texta = normalize(parI.getTextContent());
@@ -67,8 +70,8 @@ public class ParagraphCompare extends Command {
                             continue;
                         }
                         for (int b = 0; b < parasJ.getLength(); b++) {
-                            Element parJ = (Element)parasJ.item(b);
-                            if(parJ.hasAttribute("class") && parJ.getAttribute("class").contains("heading")) {
+                            Element parJ = (Element) parasJ.item(b);
+                            if (parJ.hasAttribute("class") && parJ.getAttribute("class").contains("heading")) {
                                 continue;
                             }
                             String textb = normalize(parJ.getTextContent());
@@ -76,15 +79,10 @@ public class ParagraphCompare extends Command {
                                 continue;
                             }
 
-                            double dc = cosine(texta, textb);
-                            double dl = levenshtein(texta, textb);
-                            if (dl > LEVEN_THRESHOLD) {
-                                documentI.addParagraphSimilarity(parI, documentJ, parJ, dl, "levenshtein");
-                                documentJ.addParagraphSimilarity(parJ, documentI, parI, dl, "levenshtein");
-                            }
-                            if (dc > COSINE_THRESHOLD) {
-                                documentI.addParagraphSimilarity(parI, documentJ, parJ, dc, "cosine");
-                                documentJ.addParagraphSimilarity(parJ, documentI, parI, dc, "cosine");
+                            double similarity = levenshtein(texta, textb);
+                            if (similarity > LEVEN_THRESHOLD) {
+                                documentI.addParagraphSimilarity(parI, documentJ, parJ, similarity, "levenshtein");
+                                documentJ.addParagraphSimilarity(parJ, documentI, parI, similarity, "levenshtein");
                             }
                         }
                     }
@@ -110,50 +108,6 @@ public class ParagraphCompare extends Command {
     @Override
     public String getUsage() {
         return "java -jar pc <path>...";
-    }
-
-    protected double levenshtein(String a, String b) {
-        if (a.equals(b)) {
-            return 1.0;
-        }
-        int maxLength = Math.max(a.length(), b.length());
-        int limit = (int) Math.ceil(maxLength * (1.0 - LEVEN_THRESHOLD));
-        LevenshteinDistance ld = new LevenshteinDistance(limit);
-        int distance = ld.apply(a, b);
-        if (distance < 0) {
-            return 0;
-        }
-        double similarity = 1.0 - (distance / ((double) maxLength));
-        return similarity;
-    }
-
-    protected double cosine(String a, String b) {
-        CosineDistance cd = new CosineDistance();
-        double distance = cd.apply(a, b);
-        return 1.0 - distance;
-    }
-
-    protected String normalize(String text) {
-        return Normalizer
-                .normalize(text.replaceAll("[\\p{Punct}]", " "), Normalizer.Form.NFD)
-                .toLowerCase()
-                .replaceAll("\\s+", " ")
-                .replaceAll("[^a-z0-9 -]", "")
-                .trim();
-    }
-
-    protected List<WildeDoc> getCorpus(String[] args) throws ParserConfigurationException, IOException, IOException, SAXException, XPathExpressionException {
-        List<WildeDoc> corpus = new ArrayList<>(1000);
-        DocReader reader = new DocReader();
-        for (String arg : args) {
-            for (Path p : this.findFiles(arg)) {
-                WildeDoc doc = reader.read(p);
-                if (!doc.areParagraphsIndexed()) {
-                    corpus.add(doc);
-                }
-            }
-        }
-        return corpus;
     }
 
 }

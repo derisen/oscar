@@ -5,20 +5,15 @@
  */
 package ca.nines.wilde.cmd;
 
-import ca.nines.wilde.doc.DocReader;
+import ca.nines.wilde.Util.Callback;
+import static ca.nines.wilde.Util.Text.cosine;
+import static ca.nines.wilde.Util.Text.levenshtein;
+import static ca.nines.wilde.Util.Text.normalize;
 import ca.nines.wilde.doc.DocWriter;
 import ca.nines.wilde.doc.WildeDoc;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.text.Normalizer;
-import java.util.ArrayList;
 import java.util.List;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.text.similarity.CosineDistance;
-import org.apache.commons.text.similarity.LevenshteinDistance;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -42,7 +37,12 @@ public class DocCompare extends Command {
             System.err.println(getUsage());
             return;
         }
-        List<WildeDoc> corpus = getCorpus(args);
+        List<WildeDoc> corpus = getCorpus(args, new Callback() {
+            @Override
+            public boolean include(WildeDoc doc) throws XPathExpressionException {
+                return !doc.isDocumentIndexed();
+            }
+        });
 
         long comparisons = (corpus.size() * (corpus.size()-1) ) / 2;
         System.out.println("Expect " + comparisons + " total comparisons.");
@@ -60,21 +60,16 @@ public class DocCompare extends Command {
                     continue;
                 }
                 String textJ = normalize(documentJ.getOriginalText());
-                double dc = cosine(textI, textJ);
-                double dl = levenshtein(textI, textJ);
+                double similarity = levenshtein(textI, textJ);
                 if(n % 25 == 0) {
                     System.out.print('.');
                 }
                 if(n % (25 * 70) == 0) {
                     System.out.println(" " + n);
                 }
-                if(dl > LEVEN_THRESHOLD) {
-                    documentI.addDocSimilarity(documentJ, dl, "levenshtein");
-                    documentJ.addDocSimilarity(documentI, dl, "levenshtein");
-                }
-                if(dc > COSINE_THRESHOLD) {
-                    documentI.addDocSimilarity(documentJ, dc, "cosine");
-                    documentJ.addDocSimilarity(documentI, dc, "cosine");
+                if(similarity > LEVEN_THRESHOLD) {
+                    documentI.addDocSimilarity(documentJ, similarity, "levenshtein");
+                    documentJ.addDocSimilarity(documentI, similarity, "levenshtein");
                 }
             }
             documentI.setDocumentIndexed();
@@ -91,51 +86,6 @@ public class DocCompare extends Command {
     @Override
     public String getUsage() {
         return "jar -jar wilde.jar dc <path>...";
-    }
-
-    protected double levenshtein(String a, String b) {
-        if (a.equals(b)) {
-            return 1.0;
-        }
-        int maxLength = Math.max(a.length(), b.length());
-        int limit = (int) Math.ceil(maxLength * (1.0 - LEVEN_THRESHOLD));
-        LevenshteinDistance ld = new LevenshteinDistance(limit);
-        int distance = ld.apply(a, b);
-        if (distance < 0) {
-            return 0;
-        }
-        double similarity = 1.0 - (distance / ((double) maxLength));
-        return similarity;
-    }
-
-    protected double cosine(String a, String b) {
-        CosineDistance cd = new CosineDistance();
-        double distance = cd.apply(a, b);
-        return 1.0 - distance;
-    }
-
-    protected String normalize(String text) {
-        return Normalizer
-                .normalize(text, Normalizer.Form.NFD)
-                .toLowerCase()
-                .replaceAll("[\\p{Punct}]", " ")
-                .replaceAll("\\s+", " ")
-                .replaceAll("[^a-z0-9 -]", "")
-                .trim();
-    }
-
-    protected List<WildeDoc> getCorpus(String[] args) throws ParserConfigurationException, IOException, IOException, SAXException, XPathExpressionException {
-        List<WildeDoc> corpus = new ArrayList<>(1000);
-        DocReader reader = new DocReader();
-        for (String arg : args) {
-            for (Path p : this.findFiles(arg)) {
-                WildeDoc doc = reader.read(p);
-                if( ! doc.isDocumentIndexed()) {
-                    corpus.add(doc);
-                }
-            }
-        }
-        return corpus;
     }
 
 }
