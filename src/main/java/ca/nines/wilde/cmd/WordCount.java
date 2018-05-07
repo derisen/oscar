@@ -31,6 +31,10 @@ public class WordCount extends Command {
         DocWriter writer = new DocWriter();
         for (WildeDoc doc : getCorpus(args)) {
             String text = doc.getOriginalText();
+            if(text == null) {
+                System.out.println(doc.getPath() + " is missing div#original");
+                continue;
+            }
             int count = text.trim().split("\\s+").length;
             doc.addMetadata("wr.wordcount", Integer.toString(count));
             writer.write(doc.getPath(), doc);
