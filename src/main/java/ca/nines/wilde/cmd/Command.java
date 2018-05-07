@@ -67,7 +67,7 @@ abstract public class Command {
         return pathList;
     }
 
-    protected List<WildeDoc> getCorpus(String[] args) throws ParserConfigurationException, IOException, IOException, SAXException, XPathExpressionException {
+    protected List<WildeDoc> getCorpus(String[] args) throws ParserConfigurationException, IOException, IOException, SAXException, XPathExpressionException, Exception {
         return getCorpus(args, new Callback() {
             @Override
             public boolean include(WildeDoc doc) {
@@ -76,7 +76,7 @@ abstract public class Command {
         });
     }
 
-    protected List<WildeDoc> getCorpus(String[] args, Callback filter) throws ParserConfigurationException, IOException, IOException, SAXException, XPathExpressionException {
+    protected List<WildeDoc> getCorpus(String[] args, Callback filter) throws ParserConfigurationException, IOException, IOException, SAXException, XPathExpressionException, Exception {
         List<WildeDoc> corpus = new ArrayList<>(1000);
         DocReader reader = new DocReader();
         for (String arg : args) {

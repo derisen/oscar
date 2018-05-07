@@ -50,22 +50,37 @@ public class WildeDoc {
 
     public void addDocSimilarity(WildeDoc other, double similarity, String measure) throws XPathExpressionException {
         Element link = document.createElement("link");
-        link.setAttribute("class", measure);
+        link.setAttribute("class", "similarity");
         link.setAttribute("data-similarity", Double.toString(similarity));
         link.setAttribute("href", other.getDocId());
         link.setAttribute("rel", "similarity");
         document.getElementsByTagName("head").item(0).appendChild(link);
     }
 
-    // <a class="similarity levenshtein" data-document="r_666" data-paragraph="d1e67" data-similarity="0.9443609022556391" data-type="levenshtein"/>
     public void addParagraphSimilarity(Node paragraph, WildeDoc otherDoc, Node otherParagraph, double similarity, String measure) throws XPathExpressionException {
         Element a = document.createElement("a");
-        a.setAttribute("class", "similarity " + measure);
+        a.setAttribute("class", "similarity");
         a.setAttribute("data-document", otherDoc.getDocId());
         a.setAttribute("data-paragraph", ((Element)otherParagraph).getAttribute("id"));
         a.setAttribute("data-similarity", Double.toString(similarity));
         a.setAttribute("data-type", measure);
         paragraph.appendChild(a);
+    }
+
+    public void removeParagraphSimilarities() throws XPathExpressionException {
+        NodeList nodelist = (NodeList)this.xpath.evaluate("//a[@class='similarity']", document.getDocumentElement(), XPathConstants.NODESET);
+        for(int i = 0; i < nodelist.getLength(); i++) {
+            Node node = nodelist.item(i);
+            node.getParentNode().removeChild(node);
+        }
+    }
+
+    public void removeDocumentSimilarities() throws XPathExpressionException {
+        NodeList nodelist = (NodeList)this.xpath.evaluate("//link[@class='similarity']", document.getDocumentElement(), XPathConstants.NODESET);
+        for(int i = 0; i < nodelist.getLength(); i++) {
+            Node node = nodelist.item(i);
+            node.getParentNode().removeChild(node);
+        }
     }
 
     public void setDocumentIndexed() {
@@ -142,6 +157,19 @@ public class WildeDoc {
         }
         Element element = (Element)node;
         element.setAttribute("content", value);
+    }
+
+    public void setTitle(String title) throws XPathExpressionException {
+        NodeList nodelist = document.getElementsByTagName("title");
+        Element element;
+        if(nodelist.getLength() >= 1) {
+            element = (Element)nodelist.item(0);
+        } else {
+            element = document.createElement("title");
+            Node head = (Node)this.xpath.evaluate("/html/head", document.getDocumentElement(), XPathConstants.NODE);
+            head.appendChild(element);
+        }
+        element.setTextContent(title);
     }
 
     public void addMetadata(String name, String value) throws XPathExpressionException, Exception {

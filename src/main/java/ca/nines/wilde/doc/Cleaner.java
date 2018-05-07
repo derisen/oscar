@@ -33,6 +33,7 @@ public class Cleaner {
         "dc.source.facsimile",
         "dc.publisher.edition",
         "dc.source.url",
+        "wr.path",
     })));
 
     public List<String> clean(WildeDoc doc) throws XPathExpressionException {
@@ -59,7 +60,6 @@ public class Cleaner {
                 p.setAttribute("id", docId + "_" + n + "_" + i);
             }
         }
-        // adds Id attributes to the document root and to every paragraph.
     }
 
 }

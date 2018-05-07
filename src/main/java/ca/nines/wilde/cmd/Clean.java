@@ -8,6 +8,8 @@ package ca.nines.wilde.cmd;
 import ca.nines.wilde.doc.Cleaner;
 import ca.nines.wilde.doc.DocWriter;
 import ca.nines.wilde.doc.WildeDoc;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
 
@@ -42,8 +44,14 @@ public class Clean extends Command {
                     System.out.println("  removed: " + s);
                 }
             }
+            LocalDate date = LocalDate.parse(doc.getMetadata("dc.date"), DateTimeFormatter.ofPattern("yyyy-MM-d"));
+            String title = doc.getMetadata("dc.publisher") + " - " + date.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, y"));
+            doc.setTitle(title);
             cleaner.addIdentifiers(doc, id, i);
             doc.setMetadata("wr.path", doc.getPath().toString());
+            doc.removeDocumentSimilarities();
+            doc.removeParagraphSimilarities();
+
             writer.write(doc.getPath(), doc);
             i++;
         }
