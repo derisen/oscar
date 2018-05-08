@@ -5,6 +5,7 @@
  */
 package ca.nines.wilde.cmd;
 
+import ca.nines.wilde.Util.Text;
 import ca.nines.wilde.doc.DocWriter;
 import ca.nines.wilde.doc.WildeDoc;
 import org.apache.commons.cli.CommandLine;
@@ -36,8 +37,8 @@ public class WordCount extends Command {
                 heading = "";
             }
 
-            int contentCount = content.trim().split("\\s+").length;
-            int headingCount = heading.trim().split("\\+s").length;
+            int contentCount = Text.normalize(content).split("\\s+").length;
+            int headingCount = Text.normalize(heading).split("\\+s").length;
             doc.setMetadata("wr.wordcount", Integer.toString(contentCount - headingCount));
             writer.write(doc.getPath(), doc);
         }

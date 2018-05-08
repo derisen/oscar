@@ -41,7 +41,8 @@ public class Text {
         return Normalizer
                 .normalize(text, Normalizer.Form.NFD)
                 .toLowerCase()
-                .replaceAll("[\\p{Punct}]", " ")
+                .replaceAll("(\\p{Graph})\\p{Punct}+(\\p{Graph})", "$1$2")
+                .replaceAll("\\p{Punct}+", " ")
                 .replaceAll("\\s+", " ")
                 .replaceAll("[^a-z0-9 -]", "")
                 .trim();
