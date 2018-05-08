@@ -11,7 +11,9 @@ import static ca.nines.wilde.Util.Text.levenshtein;
 import static ca.nines.wilde.Util.Text.normalize;
 import ca.nines.wilde.doc.DocWriter;
 import ca.nines.wilde.doc.WildeDoc;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 import javax.xml.xpath.XPathExpressionException;
 import org.apache.commons.cli.CommandLine;
 
@@ -45,7 +47,7 @@ public class DocCompare extends Command {
         });
 
         long comparisons = (corpus.size() * (corpus.size()-1) ) / 2;
-        System.out.println("Expect " + comparisons + " total comparisons.");
+        System.out.println("Expect " + NumberFormat.getNumberInstance(Locale.US).format(comparisons) + " total comparisons.");
         long n = 0;
         DocWriter writer = new DocWriter();
 
@@ -55,18 +57,15 @@ public class DocCompare extends Command {
             String langI = documentI.getMetadata("dc.language");
             for (int j = 0; j < i; j++) {
                 n++;
+                if (n % 1000 == 0) {
+                    System.out.print("\r" + NumberFormat.getNumberInstance(Locale.US).format(n));
+                }
                 WildeDoc documentJ = corpus.get(j);
                 if (!documentJ.getMetadata("dc.language").equals(langI)) {
                     continue;
                 }
                 String textJ = normalize(documentJ.getOriginalText());
                 double similarity = levenshtein(textI, textJ);
-                if(n % 25 == 0) {
-                    System.out.print('.');
-                }
-                if(n % (25 * 70) == 0) {
-                    System.out.println(" " + n);
-                }
                 if(similarity > LEVEN_THRESHOLD) {
                     documentI.addDocSimilarity(documentJ, similarity, "levenshtein");
                     documentJ.addDocSimilarity(documentI, similarity, "levenshtein");
@@ -75,6 +74,7 @@ public class DocCompare extends Command {
             documentI.setDocumentIndexed();
             writer.write(documentI.getPath(), documentI);
         }
+        System.out.println("\nDone");
 
     }
 

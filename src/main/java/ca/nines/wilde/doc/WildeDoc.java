@@ -191,7 +191,15 @@ public class WildeDoc {
         return node.getTextContent();
     }
 
-    public List<String> getTranslations() throws XPathExpressionException {
+    public String getOriginalHeading() throws XPathExpressionException {
+        Node node = (Node)this.xpath.evaluate("//div[@id='original']/p[@class='heading']", document.getDocumentElement(), XPathConstants.NODE);
+        if(node == null) {
+            return null;
+        }
+        return node.getTextContent();
+    }
+
+    public List<String> listTranslations() throws XPathExpressionException {
         NodeList nodelist = (NodeList)this.xpath.evaluate("//div/@lang", document.getDocumentElement(), XPathConstants.NODESET);
         List<String> translations = new ArrayList<>();
         for(int i = 0; i < nodelist.getLength(); i++) {

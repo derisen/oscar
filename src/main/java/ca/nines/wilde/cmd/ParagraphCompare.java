@@ -1,14 +1,13 @@
 package ca.nines.wilde.cmd;
 
 import ca.nines.wilde.Util.Callback;
-import static ca.nines.wilde.Util.Text.cosine;
 import static ca.nines.wilde.Util.Text.levenshtein;
 import static ca.nines.wilde.Util.Text.normalize;
 import ca.nines.wilde.doc.DocWriter;
 import ca.nines.wilde.doc.WildeDoc;
+import java.text.NumberFormat;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Locale;
 import javax.xml.xpath.XPathExpressionException;
 import org.apache.commons.cli.CommandLine;
 import org.w3c.dom.Element;
@@ -45,9 +44,9 @@ public class ParagraphCompare extends Command {
                 return !doc.areParagraphsIndexed();
             }
         });
-        
+
         long comparisons = (corpus.size() * (corpus.size() - 1)) / 2;
-        System.out.println("Expect " + comparisons + " total comparisons.");
+        System.out.println("Expect " + NumberFormat.getNumberInstance(Locale.US).format(comparisons) + " total comparisons.");
         long n = 0;
         DocWriter writer = new DocWriter();
 
@@ -87,11 +86,8 @@ public class ParagraphCompare extends Command {
                         }
                     }
                 }
-                if (n % 25 == 0) {
-                    System.out.print('.');
-                }
-                if (n % (25 * 70) == 0) {
-                    System.out.println(" " + n);
+                if (n % 1000 == 0) {
+                    System.out.println("\r" + NumberFormat.getNumberInstance(Locale.US).format(n));
                 }
             }
             documentI.setParagraphsIndexed();

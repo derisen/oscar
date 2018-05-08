@@ -6,14 +6,9 @@
 package ca.nines.wilde.cmd;
 
 import ca.nines.wilde.doc.DocWriter;
-import ca.nines.wilde.doc.Validator;
 import ca.nines.wilde.doc.WildeDoc;
 import org.apache.commons.cli.CommandLine;
 
-/**
- *
- * @author michael
- */
 public class WordCount extends Command {
 
     @Override
@@ -30,13 +25,23 @@ public class WordCount extends Command {
         }
         DocWriter writer = new DocWriter();
         for (WildeDoc doc : getCorpus(args)) {
-            String text = doc.getOriginalText();
-            if(text == null) {
+            String content = doc.getOriginalText();
+            if(content == null) {
                 System.out.println(doc.getPath() + " is missing div#original");
                 continue;
             }
-            int count = text.trim().split("\\s+").length;
-            doc.addMetadata("wr.wordcount", Integer.toString(count));
+            String heading = doc.getOriginalHeading();
+            if(heading == null) {
+                System.out.println(doc.getPath() + " is missing a heading");
+                heading = "";
+            }
+
+            System.out.println(doc.getPath());
+            System.out.println(String.join("|", content.trim().split("\\s+")));
+
+            int contentCount = content.trim().split("\\s+").length;
+            int headingCount = heading.trim().split("\\+s").length;
+            doc.setMetadata("wr.wordcount", Integer.toString(contentCount - headingCount));
             writer.write(doc.getPath(), doc);
         }
     }
