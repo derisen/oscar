@@ -36,9 +36,6 @@ public class WordCount extends Command {
                 heading = "";
             }
 
-            System.out.println(doc.getPath());
-            System.out.println(String.join("|", content.trim().split("\\s+")));
-
             int contentCount = content.trim().split("\\s+").length;
             int headingCount = heading.trim().split("\\+s").length;
             doc.setMetadata("wr.wordcount", Integer.toString(contentCount - headingCount));
