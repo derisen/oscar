@@ -56,6 +56,9 @@ public class ParagraphCompare extends Command {
             NodeList parasI = documentI.getParagraphs();
             for (int j = 0; j < i; j++) {
                 n++;
+                if (n % 1000 == 0) {
+                    System.out.print("\r" + NumberFormat.getNumberInstance(Locale.US).format(n));
+                }
                 WildeDoc documentJ = corpus.get(j);
                 if (documentJ.getMetadata("dc.language").equals(lang)) {
                     NodeList parasJ = documentJ.getParagraphs();
@@ -85,9 +88,6 @@ public class ParagraphCompare extends Command {
                             }
                         }
                     }
-                }
-                if (n % 1000 == 0) {
-                    System.out.println("\r" + NumberFormat.getNumberInstance(Locale.US).format(n));
                 }
             }
             documentI.setParagraphsIndexed();
