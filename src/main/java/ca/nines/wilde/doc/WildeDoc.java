@@ -18,7 +18,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- *
+ * This class contains methods that formats an XML file provided as a WildeDoc object. It also
+ * contains methods that perform various utility functions on XML documents.
  * @author michael
  */
 public class WildeDoc {
@@ -29,20 +30,35 @@ public class WildeDoc {
 
     private final Path path;
 
+    /**
+    * Class constructor sets an instance of the class as this instance.
+    * @param path Path expression of the file location.
+    * @param document Document object.
+    */
     public WildeDoc(Path path, Document document) {
         this.document = document;
         this.xpath = XPathFactory.newInstance().newXPath();
         this.path = path;
     }
-
+    
+    /** 
+    * @return a path expression
+    */
     public Path getPath() {
         return path;
     }
-
+    
+    /** 
+    * @return document object.
+    */
     public Document getXmlDocument() {
         return document;
     }
 
+    /** 
+    * @return document ID as a string.
+    * @throws XPathExpressionException if path expression provided is not correct.
+    */
     public String getDocId() throws XPathExpressionException {
         String id = (String)this.xpath.evaluate("/html/@id", document.getDocumentElement(), XPathConstants.STRING);
         return id;

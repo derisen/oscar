@@ -17,8 +17,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- *
- * @author michael
+ * This class contains methods that remove non-essential tags from an XML
+ * document. Essential tags are defined as a static collection of strings. The class also 
+ * contains a method to add identifiers to documents. 
+ * @author mjoyce
  */
 public class Cleaner {
 
@@ -35,7 +37,13 @@ public class Cleaner {
         "dc.source.url",
         "wr.path",
     })));
-
+    
+    /**
+    * This method removes all the tags in an XML document that are not marked as KEPT above.
+    * @param doc WildeDoc object argument. A WildeDoc object points to a modified XML file. 
+    * @return a string list that contains the names of the removed tags. 
+    * @throws XPathExpressionException if the path information provided is not appropriate.
+    */
     public List<String> clean(WildeDoc doc) throws XPathExpressionException {
         List<String> removed = new ArrayList<>();
         for (String name : doc.listMetadataNames()) {
@@ -44,9 +52,18 @@ public class Cleaner {
                 removed.add(name);
             }
         }
+ 
+        System.out.print("\nDone");
         return removed;
     }
 
+    /** 
+    * This method adds an identifier string to the head of an XML file.
+    * @param doc WildeDoc object argument. A WildeDoc object points to a modified XML file.
+    * @param docId string argument. Document identifier.
+    * @param n integer argument. Further document identifier.
+    * @throws XPathExpressionException if the path information provided is not appropriate.
+    */
     public void addIdentifiers(WildeDoc doc, String docId, int n) throws XPathExpressionException {
         Document xml = doc.getXmlDocument();
         Element root = xml.getDocumentElement();

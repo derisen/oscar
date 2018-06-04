@@ -24,7 +24,8 @@ import org.w3c.dom.Document;
 import org.w3c.tidy.Tidy;
 
 /**
- *
+ * This class contains a method that formats a WildeDoc object with 
+ * appropriate specifications and XML tags.
  * @author michael
  */
 public class DocWriter {
@@ -35,8 +36,18 @@ public class DocWriter {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
     }
-
+    
+    
+    /**
+    * This method formats a given WildeDoc object using the 3rd party utility class 'Tidy'.
+    * @param path Path expression of the file location.
+    * @param doc WildeDoc object argument. A WildeDoc object points to a modified XML file.
+    * @throws TransformerConfigurationException if Transformer is not configured correctly.
+    * @throws TransformerException if Transformer does not execute correctly.
+    * @throws IOException if input operation fails.
+    */
     public void write(Path path, WildeDoc doc) throws TransformerConfigurationException, TransformerException, IOException {
         StringWriter writer = new StringWriter();
         StreamResult result = new StreamResult(writer);
@@ -49,7 +60,7 @@ public class DocWriter {
         Tidy tidy = new Tidy();
         tidy.setInputEncoding("UTF-8");
         tidy.setOutputEncoding("UTF-8");
-        tidy.setXmlOut(true);
+        tidy.setXmlOut(false);
         tidy.setSmartIndent(true);
         tidy.setTidyMark(false);
         tidy.setErrout(new PrintWriter(new NullOutputStream()));

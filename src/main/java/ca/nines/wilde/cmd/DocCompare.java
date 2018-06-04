@@ -3,10 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ca.nines.wilde.cmd;
+package ca.nines.wilde.cmd;  
 
 import ca.nines.wilde.Util.Callback;
-import static ca.nines.wilde.Util.Text.cosine;
 import static ca.nines.wilde.Util.Text.levenshtein;
 import static ca.nines.wilde.Util.Text.normalize;
 import ca.nines.wilde.doc.DocWriter;
@@ -18,8 +17,9 @@ import javax.xml.xpath.XPathExpressionException;
 import org.apache.commons.cli.CommandLine;
 
 /**
- *
- * @author michael
+ * This class contains a method that compare two documents with respect to their
+ * levenshtein distance, as well as other command prompt utilities.
+ * @author mjoyce
  */
 public class DocCompare extends Command {
 
@@ -61,18 +61,22 @@ public class DocCompare extends Command {
                     System.out.print("\r" + NumberFormat.getNumberInstance(Locale.US).format(n));
                 }
                 WildeDoc documentJ = corpus.get(j);
-                if (!documentJ.getMetadata("dc.language").equals(langI)) {
+                if (!documentJ.getMetadata("dc.language").equals(langI)) {               
                     continue;
                 }
                 String textJ = normalize(documentJ.getOriginalText());
                 double similarity = levenshtein(textI, textJ);
                 if(similarity > LEVEN_THRESHOLD) {
+                    
                     documentI.addDocSimilarity(documentJ, similarity, "levenshtein");
                     documentJ.addDocSimilarity(documentI, similarity, "levenshtein");
                 }
+   
             }
+            
             documentI.setDocumentIndexed();
             writer.write(documentI.getPath(), documentI);
+            
         }
         System.out.println("\nDone");
 
@@ -85,7 +89,7 @@ public class DocCompare extends Command {
 
     @Override
     public String getUsage() {
-        return "jar -jar wilde.jar dc <path>...";
+        return "jar -jar oscar.jar dc <path>...";
     }
 
 }

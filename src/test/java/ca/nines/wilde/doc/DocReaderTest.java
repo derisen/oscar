@@ -10,12 +10,9 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
- * @author michael
+ * @author mjoyce
  */
 public class DocReaderTest {
-
-    private DocReader reader;
 
     /**
      * Test of read method, of class DocReader.
@@ -23,11 +20,13 @@ public class DocReaderTest {
      */
     @Test
     public void testRead() throws Exception {
+        System.out.println("ReaderTest");
+        
         ClassLoader cl = getClass().getClassLoader();
-        File file = new File(cl.getResource("doc.xml").getFile());
+        File file = new File(cl.getResource("ValidXMLDoc.xml").getFile());
         DocReader reader = new DocReader();
         WildeDoc doc = reader.read(file.toPath());
-        assertNotNull(doc);
+        assertNotNull(doc);               
     }
 
 }

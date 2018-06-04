@@ -31,8 +31,8 @@ import org.atteo.classindex.IndexSubclasses;
 import org.xml.sax.SAXException;
 
 /**
- *
- * @author michael
+ * This class contains methods that handle the command prompt interface of the application.
+ * @author mjoyce
  */
 @IndexSubclasses
 abstract public class Command {
@@ -103,6 +103,7 @@ abstract public class Command {
         return cmd;
     }
 
+    
     public String[] getArgList(CommandLine commandLine) {
         List<String> argList = commandLine.getArgList();
         argList = argList.subList(1, argList.size());

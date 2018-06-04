@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" id="usnyt_1392">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>New York Times - Thursday, April 18, 1895</title>
+    <meta content="1895-04-18" name="dc.date" />
+    <meta content="New York Times" name="dc.publisher" />
+    <meta content="United States" name="dc.region" />
+    <meta content="en" name="dc.language" />
+    <meta content="New York City" name="dc.region.city" />
+    <meta content="Newspapers.com" name="dc.source.database" />
+    <meta content="https://www.newspapers.com/title_395/the_new_york_times/" name="dc.source.url" />
+    <meta content="data/United States/New York Times/New York Times - April 18 1895.xml" name="wr.path" />
+    <meta content="50" name="wr.wordcount" />
+    <link class="similarity" data-similarity="0.9198717948717948" href="usnyt_12312312" rel="similarity" />
+    <meta content="yes" name="index.document" />
+    <meta content="yes" name="index.paragraph" />
+  </head>
+
+  <body>
+    <div id="original" lang="en">
+      <p class="heading" id="usnyt_1392_0">&gt;Mendes Slandered and Then Wounded.</p>
+
+      <p id="usnyt_1392_1">PARIS, April 17. -- In an article on Le Figaro, Jules Huret wrote of Catulle Mendes, the poet and playwright, as Oscar Wilde's friend. Mendes at once challenged Huret. The duel was fought with swords to-day in the St. Germain forest. Mendes was wounded in the forearm.<a class="similarity" data-document="usnyt_12312312" data-paragraph="usnyt_1392_1" data-similarity="0.9100719424460432" data-type="levenshtein"></a> <a class="similarity" data-document="usnyt_12312312" data-paragraph="usnyt_1392_1" data-similarity="0.9100719424460432" data-type="levenshtein"></a> <a class="similarity" data-document="usnyt_12312312" data-paragraph="usnyt_1392_1" data-similarity="0.9100719424460432" data-type="levenshtein"></a></p>
+    </div>
+  </body>
+</html>

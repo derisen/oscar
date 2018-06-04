@@ -14,7 +14,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- *
+ * This class contains a method that compare two documents, paragraph by paragraph, with respect to their
+ * levenshtein distance, as well as other command prompt utilities.
  * @author mjoyce
  */
 public class ParagraphCompare extends Command {
@@ -93,7 +94,7 @@ public class ParagraphCompare extends Command {
             documentI.setParagraphsIndexed();
             writer.write(documentI.getPath(), documentI);
         }
-
+        System.out.println("\nDone");
     }
 
     @Override
@@ -103,7 +104,7 @@ public class ParagraphCompare extends Command {
 
     @Override
     public String getUsage() {
-        return "java -jar pc <path>...";
+        return "java -jar oscar.jar pc <path>...";
     }
 
 }

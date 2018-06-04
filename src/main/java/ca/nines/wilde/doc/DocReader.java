@@ -14,13 +14,19 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
- *
- * @author michael
+ * This class contains a method that loads an XML resource 
+ * into the project as a WildeDoc object.
+ * @author mjoyce
  */
+
 public class DocReader {
 
     private final DocumentBuilder db;
 
+    /** 
+    * Class constructor: Configures a SAX parser to load the XML file into application memory.
+    * @throws ParserConfigurationException if not setup correctly.
+    */
     public DocReader() throws ParserConfigurationException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
@@ -32,7 +38,13 @@ public class DocReader {
 
         db = factory.newDocumentBuilder();
     }
-
+    
+    /** 
+    * @param path Path expression of the file location. 
+    * @return a WildeDoc object.
+    * @throws SAXException if SAX parser is not correctly configured.
+    * @throws IOException if input operation fails.
+    */
     public WildeDoc read(Path path) throws SAXException, IOException {
         Document doc = db.parse(path.toFile());
         WildeDoc wilde = new WildeDoc(path, doc);

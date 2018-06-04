@@ -14,8 +14,9 @@ import java.util.List;
 import org.apache.commons.cli.CommandLine;
 
 /**
- *
- * @author michael
+ * This class contains methods that handle command prompt for the
+ * the document cleaning process implemented elsewhere.
+ * @author mjoyce
  */
 public class Clean extends Command {
 
@@ -24,6 +25,10 @@ public class Clean extends Command {
         return "Remove unneccessary metadata from documents.";
     }
 
+    /**
+    * This method executes the clean command provided in the command prompt. 
+    * @param cmd CommandLine variable that passes a string as an argument.
+    */
     @Override
     public void execute(CommandLine cmd) throws Exception {
         String[] args = this.getArgList(cmd);

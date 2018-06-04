@@ -10,6 +10,11 @@ import ca.nines.wilde.doc.DocWriter;
 import ca.nines.wilde.doc.WildeDoc;
 import org.apache.commons.cli.CommandLine;
 
+/** 
+* This class contains a method that counts the words in an XML document passed as a WildeDoc object.
+* @author mjoyce
+*/
+
 public class WordCount extends Command {
 
     @Override
@@ -51,7 +56,7 @@ public class WordCount extends Command {
 
     @Override
     public String getUsage() {
-        return "java -jar wilde.jar wc <path>...";
+        return "java -jar oscar.jar wc <path>...";
     }
 
 }

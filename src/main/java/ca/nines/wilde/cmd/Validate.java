@@ -10,8 +10,9 @@ import ca.nines.wilde.doc.WildeDoc;
 import org.apache.commons.cli.CommandLine;
 
 /**
- *
- * @author michael
+ * This class contains a method that handles the validation process for an XML document passed
+ * WildeDoc object.
+ * @author mjoyce
  */
 public class Validate extends Command {
 
@@ -43,7 +44,7 @@ public class Validate extends Command {
 
     @Override
     public String getUsage() {
-        return "java -jar wilde.jar validate <path>...";
+        return "java -jar oscar.jar validate <path>...";
     }
 
 }

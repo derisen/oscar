@@ -11,8 +11,8 @@ import java.util.Map;
 import org.apache.commons.cli.CommandLine;
 
 /**
- *
- * @author michael
+ * This class contains methods that provides help functionality for the command prompt interface.
+ * @author mjoyce
  */
 public class Help extends Command {
 
@@ -37,7 +37,7 @@ public class Help extends Command {
 
     @Override
     public String getUsage() {
-        return "java -jar wilde.jar help";
+        return "java -jar oscar.jar help";
     }
 
     public void listCommands() throws InstantiationException, IllegalAccessException {

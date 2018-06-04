@@ -11,11 +11,19 @@ import org.apache.commons.text.similarity.CosineDistance;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
 /**
- *
+ * This class contains methods to calculate the similarity distance of two strings,
+ * as well as utility methods like text normalizer.
  * @author mjoyce
  */
 public class Text {
 
+    /** 
+    * This method implements the Levenshtein Distance algorithm to find
+    * similarities between two strings.
+    * @param a string argument
+    * @param b string argument
+    * @return double value
+    */
     public static double levenshtein(String a, String b) {
         if (a.equals(b)) {
             return 1.0;
@@ -29,14 +37,25 @@ public class Text {
         }
         double similarity = 1.0 - (distance / ((double) maxLength));
         return similarity;
+        
     }
+    
+    /** This method implements the Cosine Distance algorithm.
+     * @param a string argument
+     * @param b string argument
+     * @return double value
+     */
 
     public static double cosine(String a, String b) {
         CosineDistance cd = new CosineDistance();
         double distance = cd.apply(a, b);
         return 1.0 - distance;
     }
-
+    
+    /** This method implements a text normalizer
+     * @param text string argument
+     * @return string value
+     */
     public static String normalize(String text) {
         return Normalizer
                 .normalize(text, Normalizer.Form.NFD)

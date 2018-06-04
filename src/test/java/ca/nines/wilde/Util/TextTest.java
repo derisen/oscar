@@ -5,37 +5,13 @@
  */
 package ca.nines.wilde.Util;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
- * @author michael
+ * @author mjoyce
  */
 public class TextTest {
-
-    public TextTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     /**
      * Test of levenshtein method, of class Text.
@@ -47,6 +23,12 @@ public class TextTest {
         double expResult = 0.8;
         double result = Text.levenshtein(a, b);
         assertEquals(expResult, result, 0.0);
+        
+        String c = "abde";
+        double expResult2 = 1.0;
+        double result2 = Text.levenshtein(b,c);
+        assertEquals(expResult2, result2, 0.0);
+        
     }
 
     /**
