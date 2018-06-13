@@ -18,19 +18,25 @@ import org.w3c.dom.Element;
  * @author dogan.erisen
  */
 public class CleanerTest {   
+
+    ClassLoader cl = null;
+    File file = null;
+    DocReader reader = null;
+    WildeDoc doc = null;
+            
+    public CleanerTest() throws Exception {
     
-    /**
-     * Test of clean method, of class Cleaner.
-     */
+        cl = getClass().getClassLoader();
+        file = new File(cl.getResource("ValidXMLDoc.xml").getFile());
+        reader = new DocReader();
+        doc = reader.read(file.toPath());
+        assertNotNull(doc);
+    }
+    
+    
     @Test
     public void testClean() throws Exception {
-        System.out.println("clean");
-        
-        ClassLoader cl = getClass().getClassLoader();
-        File file = new File(cl.getResource("ValidXMLDoc.xml").getFile());
-        DocReader reader = new DocReader();
-        WildeDoc doc = reader.read(file.toPath());
-        assertNotNull(doc);
+        System.out.println("TestCleaner");
         
         Cleaner instance = new Cleaner();
         
@@ -44,18 +50,10 @@ public class CleanerTest {
         
     }
     
-    /**
-     * Test of addIdentifiers method, of class Cleaner.
-     */
+
     @Test
     public void testAddIdentifiers() throws Exception {
         System.out.println("addIdentifiers");
-        
-        ClassLoader cl = getClass().getClassLoader();
-        File file = new File(cl.getResource("ValidXMLDoc.xml").getFile());
-        DocReader reader = new DocReader();
-        WildeDoc doc = reader.read(file.toPath());
-        assertNotNull(doc);
       
         String docId = "XYZ";
         int n = 0;

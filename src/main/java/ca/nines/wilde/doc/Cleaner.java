@@ -17,7 +17,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * This class contains methods that remove non-essential tags from an XML
+ * This class contains methods that remove non-essential meta-data tags from an XML
  * document. Essential tags are defined as a static collection of strings. The class also 
  * contains a method to add identifiers to documents. 
  * @author mjoyce
@@ -39,7 +39,7 @@ public class Cleaner {
     })));
     
     /**
-    * This method removes all the tags in an XML document that are not marked as KEPT above.
+    * This method removes all meta-data tags in an XML document that are not marked as KEPT above.
     * @param doc WildeDoc object argument. A WildeDoc object points to a modified XML file. 
     * @return a string list that contains the names of the removed tags. 
     * @throws XPathExpressionException if the path information provided is not appropriate.
@@ -52,8 +52,6 @@ public class Cleaner {
                 removed.add(name);
             }
         }
- 
-        System.out.print("\nDone");
         return removed;
     }
 

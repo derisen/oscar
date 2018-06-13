@@ -40,15 +40,19 @@ public class Main {
             commandName = args[0];
         }
         
-        if(!commandList.containsKey(commandName)) {
-                commandName = "help";
-                throw new IllegalArgumentException("Unknown command: " + commandName);
+        try {
+            if(!commandList.containsKey(commandName)){
+            throw new IllegalArgumentException("Unknown command: " + commandName);
+        } 
+        } catch (IllegalArgumentException e){
+            System.err.println(e.getMessage());
+            System.exit(-1);
         }
-       
 
         Command cmd = commandList.get(commandName);
         Options opts = cmd.getOptions();
         CommandLine commandLine = null;
+        
         try {
             commandLine = cmd.getCommandLine(opts, args);
         } catch (UnrecognizedOptionException e) {

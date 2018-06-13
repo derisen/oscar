@@ -28,23 +28,55 @@ import org.w3c.dom.NodeList;
  */
 public class ParagraphCompareTest {
     
-    /**
-     * Test of execute method, of class ParagraphCompare.
-     */
+    
+    ClassLoader cl = null;
+        
+    File file = null;
+    File file2 = null;
+    
+    DocReader reader = null;
+        
+    WildeDoc doc = null;
+    WildeDoc doc2 = null;
+        
+    public ParagraphCompareTest() throws Exception {
+    
+        cl = getClass().getClassLoader();
+        
+        file = new File("src/test/resources/SimilarDoc.xml");
+        file2 = new File("src/test/resources/SimilarDoc2.xml");
+        
+        reader = new DocReader();
+        
+        doc = reader.read(file.toPath());
+        doc2 = reader.read(file2.toPath());
+    
+    }
+
     @Test
     public void testExecute() throws Exception {
         System.out.println("TestParagraphCompare");
         
-        ClassLoader cl = getClass().getClassLoader();
         
-        File file = new File("src/test/resources/SimilarDoc.xml");
-        File file2 = new File("src/test/resources/SimilarDoc2.xml");
+        String[] args = new String[3];
+        args[0] = "java -jar oscar.jar pc "; 
+        args[1] = file.getAbsolutePath();
+        args[2] = file2.getAbsolutePath();
         
         
-        DocReader reader = new DocReader();
+        CommandLineParser parser = new DefaultParser();
+        Options opts = new Options();
+        opts.addOption("h", "help", false, "Command description.");
         
-        WildeDoc doc = reader.read(file.toPath());
-        WildeDoc doc2 = reader.read(file2.toPath());
+        CommandLine cmd = parser.parse(opts, args);
+        ParagraphCompare comparer = new ParagraphCompare();
+        comparer.execute(cmd);
+
+    }
+    
+    @Test
+    public void testExecuteResults() throws Exception {
+    
         
         NodeList parasI = doc.getParagraphs();
         NodeList parasJ = doc2.getParagraphs();
@@ -63,23 +95,7 @@ public class ParagraphCompareTest {
         }
         
         double similarity = levenshtein(texta, textb);
-        System.out.println(String.valueOf(similarity));
-        
-        String[] args = new String[3];
-        args[0] = "java -jar oscar.jar pc "; 
-        args[1] = file.getAbsolutePath();
-        args[2] = file2.getAbsolutePath();
-        
-        System.out.println(args[0]+args[1]+args[2]); 
-        
-        CommandLineParser parser = new DefaultParser();
-        Options opts = new Options();
-        opts.addOption("h", "help", false, "Command description.");
-        
-        CommandLine cmd = parser.parse(opts, args);
-        ParagraphCompare comparer = new ParagraphCompare();
-        comparer.execute(cmd);
-        
+    
         Document xml = doc.getXmlDocument();
         XPath xpath = XPathFactory.newInstance().newXPath();
         double expResult = Double.parseDouble((String)xpath.evaluate("//a[@class='similarity']/@data-similarity", xml.getDocumentElement(), XPathConstants.STRING));
@@ -91,7 +107,8 @@ public class ParagraphCompareTest {
         assertEquals(similarity, expResult2, 0.0f);
         
         assertEquals(expResult, expResult2, 0.0f);
-
+        
+        
     }
     
 }

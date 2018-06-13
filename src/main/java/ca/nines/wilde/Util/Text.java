@@ -18,8 +18,8 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 public class Text {
 
     /** 
-    * This method implements the Levenshtein Distance algorithm to find
-    * similarities between two strings.
+    * This method implements the Levenshtein Similarity algorithm to find
+    * Levenshtein distance between two strings.
     * @param a string argument
     * @param b string argument
     * @return double value
@@ -40,7 +40,7 @@ public class Text {
         
     }
     
-    /** This method implements the Cosine Distance algorithm.
+    /** This method implements the Cosine Similarity algorithm.
      * @param a string argument
      * @param b string argument
      * @return double value

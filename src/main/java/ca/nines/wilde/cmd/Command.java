@@ -31,7 +31,7 @@ import org.atteo.classindex.IndexSubclasses;
 import org.xml.sax.SAXException;
 
 /**
- * This class contains methods that handle the command prompt interface of the application.
+ * This class contains methods that handle the terminal interface of the application.
  * @author mjoyce
  */
 @IndexSubclasses

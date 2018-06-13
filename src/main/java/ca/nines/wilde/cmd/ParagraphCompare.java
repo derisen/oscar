@@ -94,7 +94,6 @@ public class ParagraphCompare extends Command {
             documentI.setParagraphsIndexed();
             writer.write(documentI.getPath(), documentI);
         }
-        System.out.println("\nDone");
     }
 
     @Override

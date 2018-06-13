@@ -9,13 +9,10 @@ import org.junit.Test;
 import org.apache.commons.cli.UnrecognizedOptionException;
 
 /**
- * @author dogan.erisen
+ * @author derisen
  */
 public class MainTest {
     
-    /**
-     * Test of main method, of class Main.
-     */
     @Test (expected = IllegalArgumentException.class)
     public void testMainForInvalidCommand() throws Exception {
         System.out.println("InvalidCommandTest");
@@ -25,9 +22,6 @@ public class MainTest {
         Main.main(args);
     }
     
-    /**
-     * Another test of main method, of class Main.
-     */
     @Test (expected = UnrecognizedOptionException.class)
     public void testMainForInvalidOption() throws Exception {
         System.out.println("InvalidOptionTest");
@@ -38,9 +32,6 @@ public class MainTest {
         Main.main(args);
     }
     
-    /**
-     * Another test of main method, of class Main.
-     */
     @Test
     public void testMainForValidCommandAndOption() throws Exception{
         System.out.println("ValidCommandAndOptionTest");

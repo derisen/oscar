@@ -14,10 +14,7 @@ import static org.junit.Assert.*;
  */
 public class DocReaderTest {
 
-    /**
-     * Test of read method, of class DocReader.
-     * @throws java.lang.Exception
-     */
+
     @Test
     public void testRead() throws Exception {
         System.out.println("ReaderTest");

@@ -18,7 +18,7 @@ import org.apache.commons.cli.CommandLine;
 
 /**
  * This class contains a method that compare two documents with respect to their
- * levenshtein distance, as well as other command prompt utilities.
+ * Levenshtein distance, as well as other command prompt utilities.
  * @author mjoyce
  */
 public class DocCompare extends Command {
@@ -78,8 +78,6 @@ public class DocCompare extends Command {
             writer.write(documentI.getPath(), documentI);
             
         }
-        System.out.println("\nDone");
-
     }
 
     @Override

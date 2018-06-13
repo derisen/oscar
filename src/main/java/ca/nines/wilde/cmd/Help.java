@@ -23,8 +23,8 @@ public class Help extends Command {
 
     @Override
     public void execute(CommandLine cmd) throws Exception {
-        System.out.println("General usage: java -jar path/to/wip.jar [command] [options]");
-        System.out.println("Specific command: java -jar path/to/wip.jar [command] -h");
+        System.out.println("General usage: java -jar oscar.jar [command] [options]");
+        System.out.println("Specific command: java -jar oscar.jar [command] -h");
         System.out.println();
         System.out.println("[command] is one of the following: ");
         listCommands();

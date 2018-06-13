@@ -42,7 +42,7 @@ public class WildeDoc {
     }
     
     /** 
-    * @return a path expression
+    * @return the file system path to the original XML file that was used to create the object.
     */
     public Path getPath() {
         return path;

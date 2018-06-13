@@ -13,9 +13,7 @@ import static org.junit.Assert.*;
  */
 public class TextTest {
 
-    /**
-     * Test of levenshtein method, of class Text.
-     */
+
     @Test
     public void testLevenshtein() {
         String a = "abcde";
@@ -31,9 +29,7 @@ public class TextTest {
         
     }
 
-    /**
-     * Test of cosine method, of class Text.
-     */
+
     @Test
     public void testCosine() {
         String a = "a a b c";
@@ -43,9 +39,7 @@ public class TextTest {
         assertEquals(expResult, result, 0.02);
     }
 
-    /**
-     * Test of normalize method, of class Text.
-     */
+
     @Test
     public void testNormalize() {
         String text = " a test isn't fun. But this is. ";

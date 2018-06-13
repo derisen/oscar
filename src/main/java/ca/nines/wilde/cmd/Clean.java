@@ -69,7 +69,7 @@ public class Clean extends Command {
 
     @Override
     public String getUsage() {
-        return "java -jar wilde.jar clean <path>...";
+        return "java -jar oscar.jar clean <path>...";
     }
 
 }

@@ -21,28 +21,29 @@ import static org.junit.Assert.*;
 import org.w3c.dom.Document;
 
 /**
- *
- * @author dogan.erisen
+ * @author derisen
  */
+
 public class WordCountTest {
     
+    ClassLoader cl = null;
+    File file = null;
+    WildeDoc doc = null;
+    DocReader reader = null;
+    
+    public WordCountTest() throws Exception {
+        cl = getClass().getClassLoader();
+        file = new File(cl.getResource("ValidXMLDoc.xml").getFile());
+        reader = new DocReader();
+        doc = reader.read(file.toPath());
+        
+        assertNotNull(doc);
+        
+    }
 
-    /**
-     * Test of execute method, of class WordCount.
-     */
     @Test
     public void testExecute() throws Exception {
         System.out.println("WordCountTest");
-        
-        ClassLoader cl = getClass().getClassLoader();
-        File file = new File(cl.getResource("ValidXMLDoc.xml").getFile());
-        
-        DocReader reader = new DocReader();
-        WildeDoc doc = reader.read(file.toPath());
-        assertNotNull(doc);
-        
-        Document xml = doc.getXmlDocument();
-        XPath xpath = XPathFactory.newInstance().newXPath();
         
         String[] args = new String[2];
         args[0] = "java -jar oscar.jar wc ";
@@ -56,15 +57,20 @@ public class WordCountTest {
         
         WordCount counter = new WordCount();
         counter.execute(cmd);
+
+    }
+    
+    @Test
+    public void testExecuteResults() throws Exception {
+        
+        Document xml = doc.getXmlDocument();
+        XPath xpath = XPathFactory.newInstance().newXPath();
         
         int expResult = Integer.parseInt((String)xpath.evaluate("//meta[@name='wr.wordcount']/@content", xml.getDocumentElement(), XPathConstants.STRING));       
         System.out.println(expResult);
         
         String content = doc.getOriginalText();
         String heading = doc.getOriginalHeading();
-        
-        assertNotNull(content);
-        assertNotNull(heading);
             
         int contentCount = Text.normalize(content).split("\\s+").length;
         int headingCount = Text.normalize(heading).split("\\+s").length;                
@@ -74,6 +80,8 @@ public class WordCountTest {
         System.out.println(actResult);
         
         assertEquals(expResult, actResult);
+        
+    
     }
 
     

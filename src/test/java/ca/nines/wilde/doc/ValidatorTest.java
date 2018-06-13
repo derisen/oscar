@@ -16,20 +16,23 @@ import static org.junit.Assert.*;
  * @author derisen
  */
 public class ValidatorTest {
-
+    
+        ClassLoader cl = null;
+        File file = null;
+        DocReader reader = null;
+        WildeDoc doc = null;
+    
+    public ValidatorTest() throws Exception {
+    
+        cl = getClass().getClassLoader();
+        file = new File(cl.getResource("ValidXMLDoc.xml").getFile());
+        reader = new DocReader();
+        doc = reader.read(file.toPath());
+    }
             
-    /**
-     * Test of validate method, of class Validator.
-     */
     @Test
     public void testValidateForInvalidFile() throws Exception {
         System.out.println("InvalidFileTest");
-        
-        ClassLoader cl = getClass().getClassLoader();
-        File file = new File(cl.getResource("ValidXMLDoc.xml").getFile());
-        DocReader reader = new DocReader();
-        WildeDoc doc = reader.read(file.toPath());
-        assertNotNull(doc);
         
         Validator instance = new Validator();
         List<String> expResult = Collections.<String>emptyList();       
@@ -37,20 +40,13 @@ public class ValidatorTest {
         assertEquals(expResult, result);   
     }
     
-    /**
-     * Test of validate method, of class Validator.
-     */
     @Test
     public void testValidateForValidFile() throws Exception {
         System.out.println("ValidFile");
         
-        ClassLoader cl = getClass().getClassLoader();
-        File file = new File(cl.getResource("InvalidXMLDoc.xml").getFile());
-        DocReader reader = new DocReader();
-        WildeDoc doc = reader.read(file.toPath());
-        assertNotNull(doc);
-        
         Validator instance = new Validator();
+        
+        doc.removeMetadata("dc.date");
         
         List<String> expResult = new ArrayList<String>();    
         String errorMessage = "Missing metadata: dc.date";
